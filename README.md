@@ -23,45 +23,45 @@ Each get route, besides login, begins by getting the user info inorder to displa
 
 I found that where possible when executing SQL queries it was easier to include as much information as possible and then creating a count to iterate through each table in order to display the information using JINJA in the templates by finding the info in the table.
 
-##### index route:
+`index route:`
 For the index route I want to display two tables. One of all the unscheduled jobs and one of all the scheduled jobs. So I created a table of each and a count of how many of rows in each table.
 
-##### complete_job route:
+`complete_job route:`
 This route is a "post" only route that updates a job and sets it to be complete(sets the completed column to 1 for a given job).
 
-##### complete_note route:
+`complete_note route:`
 This route is a "post" only route that updates a note and sets it to be complete(sets the completed column to 1 for a given note).
 
-##### delete_shades route:
+`delete_shades route:`
 This route is a "post" only route that deletes a shade and returns the user to the most recent page they visited.
 
-##### job route:
+`job route:`
 This queries for all the information related to a particular job. It queries for the install details as well as all notes related to the job divided into completed and incomplete notes.
 
-##### new_note route:
+`new_note route:`
 Post only route that creates a new record on the notes table.
 
-##### new_shades route:
+`new_shades route:`
 Post only route that creates a new record on the shades table.
 
-##### update_shades route:
+`update_shades route:`
 Post only route that updates a record on the shades table.
 
-##### shades route:
+`shades route:`
 If this route is accessed by a post method, it updates a shade other wise it queries for a table with information about all the shades related to a particular job.
 
-##### update_job route:
+`update_job route:`
 A post only route that updates a job.
 
-##### login route:
+`login route:`
 If accesed it will first clear sessions which will log out any users that may be logged in at the time. Then if the request method was reached via post it will first validate that the user inputed a username and an email.
 
 Then it will query the db to make sure the username exists and if the username exists it will check the see if the hash of that user matches and stores the user_id in sessions.
 
-##### logout route:
+`logout route:`
 This route clears the session and redirects user to the login form.
 
-##### register route:
+`register route:`
 This route first checks to see that the logged in users role is admin. Then renders a template with a form to register a new user.
 When the form is submited via a post method the route first validates that all the fields are filled out. Then it checks to make sure the username is unique. Then it checks to make sure the passwords match. Then it hashes the password and add a new record to the user table.
 
