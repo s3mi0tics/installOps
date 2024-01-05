@@ -1,0 +1,417 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{ username }} home
+{% endblock %}
+
+{% block main %}
+<div class="container">
+
+    <!-- SCHEDULE/UPDATE -->
+    <div class="container job-buttons row justify-content-end mb-4">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary col-2" data-bs-toggle="modal" data-bs-target="#schedule_update_modal">
+            Update
+        </button>
+    </div>
+    <!--Schedule Update Modal -->
+    <div class="modal fade" id="schedule_update_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header mb-1">
+                    <h5 class="modal-title" id="staticBackdropLabel">Update/Schedule: {{ job[0]["job_last_name"] }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3" action="/update_job/{{ job_id }}" method="post">
+                        <div class="container mt-1">
+                            <div class="modal-header">
+                                Schedule:
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="date">Date:</label>
+                                        <input type="date" class="form-control" id="date" name="date" value={{
+                                            job[0]["install_date"] }}>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="time">Time:</label>
+                                        <input type="time" class="form-control" id="time" name="time" value={{
+                                            job[0]["install_time"] }}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container">
+                                <lable for="installer_id">Installer:</lable>
+                                <select id="installer_id" name="installer_id" class="form-select"
+                                    aria-label="Default select example">
+                                    <option value="" disabled selected>Select Installer:</option>
+                                    {% for i in range(0, all_installers_count) %}
+                                    <option value={{ all_installers[i]['id'] }}>{{ all_installers[i]['first_name'] }} {{
+                                        all_installers[i]['last_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <div class="modal-header m-1">
+                                    Update:
+                                </div>
+                            </div>
+                            <div class="container mt-1">
+                                <div class="row m-2">
+                                    <div class="col-md-6">
+                                        <label for="last_name">Last Name:</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" value={{
+                                            job[0]["job_last_name"] }}>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="first_name">First Name:</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name"
+                                            value={{ job[0]["job_first_name"] }}>
+                                    </div>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="col-md-6">
+                                        <label for="contact">Contact:</label>
+                                        <input type="text" class="form-control" id="contact" name="contact" value={{
+                                            job[0]["contact"] }}>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="phone">Phone:</label>
+                                        <input type="text" class="form-control" id="phone" name="phone" value={{
+                                            job[0]["phone"] }}>
+                                    </div>
+                                </div>
+                                <div class="container col-12 m-2">
+                                    <label for="inputAddress" class="form-label">Address (copy and paste from google
+                                        maps):</label>
+                                    <input type="text" class="form-control" id="address" name="address"
+                                        value="{{ job[0]["address"] }}">
+                                </div>
+
+                                <div class="container col-12 m-2">
+                                    <label for="inputShades" class="form-label">Shades:</label>
+                                    <input type="text" class="form-control" id="shades" name="shades"value="{% for i in range(0, shade_count) %}{{ shades[i]["type"] }} {{ shades[i]["quantity"] }}{% if not loop.last %} | {% endif %}{% endfor %}" disabled>
+                                </div>
+
+                                    <div class=" container col-md-4 m-2">
+                                    <label for="duration" class="form-label">Install Timeframe:</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="timeframe_hour"
+                                            name="timeframe_hour" value={{ job[0]["timeframe_hour"] }}>
+                                        <span class="input-group-text">hours</span>
+                                        <input type="text" class="form-control" id="timeframe_min" name="timeframe_min"
+                                            value={{ job[0]["timeframe_min"] }}>
+                                        <span class="input-group-text">min</span>
+                                    </div>
+                                </div>
+                                <div class="container col-md-4 m-2">
+                                    <label for="recieved" class="form-label">Recieved On:</label>
+                                    <input type="date" id="recieved" name="recieved" class="form-control" value={{
+                                        job[0]["recieved"] }}>
+                                </div>
+                                <div class="container col-md-4 m-2">
+                                    <label for="cost" class="form-label">Cost:</label>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" step="0.01" class="form-control" id="cost" name="cost"
+                                            value={{ job[0]["total_cost"] }}>
+                                    </div>
+                                </div>
+                                <div class="col-12 text-end m-2 modal-footer">
+                                    <button type="submit" class="btn btn-primary mt-3 px-5">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Details -->
+    <div class="row">
+        <h1 class="text-uppercase mb-4 col-8 card-header"> Job Name: {{ job[0]["job_last_name"] }}, {{
+            job[0]["job_first_name"] }}</h1>
+        <div class="col-3">
+            {% if job[0]["contact"] is not none %}
+            <span class="fs-5">Contact: {{ job[0]["contact"] }}</h5></span> <span>
+                <h5>Phone: {{ job[0]["phone"] }}
+            </span>
+            {% else %}
+            <h5 class="justify-content-start">Phone: {{ job[0]["phone"] }}</h5>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card d-flex justify-content-start m-3">
+        <!-- INSTALLER -->
+        {% if job[0]["installer_first_name"] %}
+        <div class="card-header d-flex justify-content-between">
+            <div>
+                <h3>Installer: {{ job[0]["installer_first_name"] }} {{job[0]["installer_last_name"] }}</h3>
+            </div>
+            <div class="d-flex justify-content-end">
+                <div>
+                    <h5 class="m-2">Date: {{ job[0]["install_date"] }}</h5>
+                </div>
+                <div>
+                    <h5 class="m-2">Arraval Time: {{ job[0]["install_time"] }}</h5>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card-header d-flex justify-content-between">
+            <div>
+                <h3 col-4>Unscheduled:</h3c>
+            </div>
+            <div class="d-flex justify-content-end">
+                <div>
+                    <h5 class="m-2">Date: {{ job[0]["install_date"] }}</h5>
+                </div>
+                <div>
+                    <h5 class="m-2">Arraval Time: {{ job[0]["install_time"] }}</h5>
+                </div>
+            </div>
+            <!-- SCHEDULE/UPDATE -->
+            <div class="container job-buttons row justify-content-end mb-4">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary col-3" data-bs-toggle="modal"
+                    data-bs-target="#schedule_update_modal">
+                    Schedule
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ADDRESS -->
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="px-2">Address:</h5>
+            <h6 class="m-3">{{ job[0]["address"] }}</h6>
+            <a class="btn btn-sm btn-outline-success" href="https://www.google.com/maps/dir/{{ job[0]["address"]
+                }}">Google Maps</a>
+        </div>
+
+        <!-- SHADES -->
+        <div class="d-flex justify-content-between align-items-center m-2 card-header">
+            <h5>Shades:</h5>
+            <div class="mx-3">
+                <a href="/shades/{{ job_id }}"><button class="btn btn-primary">Update Shades for this job</button></a>
+            </div>
+        </div>
+        {% for i in range(0, shade_count) %}
+        <div class="d-flex justify-content-between flex-column">
+            <div class="d-flex justify-content-between my-2">
+                <p class="my-1 mx-3 col-4">{{ shades[i]["quantity"] }} {{ shades[i]["type"] }} {{ shades[i]["location"]
+                    }}</p>
+                <!-- Edit/Delete Shades Button trigger modal -->
+                <button onClick="shadeDict({{ i }})" class="btn btn-secondary m-2" data-bs-toggle="modal" data-bs-target="#edit_delete_shades_modal">
+                    Edit/Delete
+                </button>
+            </div>
+                        <!-- Edit/Delete Shades Modal -->
+                        <div class="modal fade" id="edit_delete_shades_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header mb-1">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Edit/Delete Shades</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="/update_shades/{{ job_id }}" method="post">
+                                        <div class="container mt-1">
+                                            <div class="row m-2">
+                                                <div class="col-md-6">
+                                                    <label for="last_name">Type</label>
+                                                    <input type="text" class="form-control" id="type" name="type" value="{{ shades[i]["type"] }}">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="first_name">Quantity</label>
+                                                    <input type="number" class="form-control" id="quantity" name="quantity" value={{ shades[i]["quantity"] }}>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 m-3">
+                                                <label for="contact">Location:</label>
+                                                <input type="text" class="form-control" id="location" name="location" value="{{ shades[i]["location"] }}">
+                                            </div>
+                                            <input type="hidden" name="job_id" value="{{ job_id }}">
+                                            <input type="hidden" name="shades_id" value="{{ shades[i]["id"] }}">
+                                            <div class="col-12 text-end mt-3 modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-3">Update Shades</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <form action="/delete_shades/{{ shades[i]["id"] }}" method="post">
+                                            <div class="d-flex justify-content-end container">
+                                                <button type="submit" class="btn btn-danger col-3 mb-4">Delete Shades</button>
+                                            </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+        {% endfor %}
+        <div class="container justify-content-end m-2">
+            <h5>Total Shades: {{ total_shades }}</h5>
+        </div>
+        <div class="container">
+            <!-- Add New Shades Button trigger modal -->
+            <div class="job-buttons row justify-content-end m-2">
+                <button type="button" class="btn btn-primary col-2" data-bs-toggle="modal" data-bs-target="#new_shades_modal">
+                    Add new shades
+                </button>
+            </div>
+            <!-- Add New Shades Modal -->
+            <div class="modal fade" id="new_shades_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header mb-1">
+                            <h5 class="modal-title" id="staticBackdropLabel">Add new shades</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3" action="/new_shades/{{ job_id }}" method="post">
+                                <div class="container mt-1">
+                                    <div class="row m-2">
+                                        <div class="col-md-6">
+                                            <label for="last_name">Type</label>
+                                            <input type="text" class="form-control" id="type" name="type"
+                                                placeholder="es cordless">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="first_name">Quantity</label>
+                                            <input type="number" class="form-control" id="quantity" name="quantity"
+                                                placeholder="4">
+                                        </div>
+                                    </div>
+                                    <div class="row m-2">
+                                        <div class="col-md-6">
+                                            <label for="contact">Location:</label>
+                                            <input type="text" class="form-control" id="location" name="location"
+                                                placeholder="Shed">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="job_id" value="{{ job_id }}">
+                                    <div class="col-12 text-end m-2 modal-footer">
+                                        <button type="submit" class="btn btn-primary mt-3 px-5">Add New Shades</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost -->
+            <div class="d-flex justify-content-end">
+                <h5 class="card-title px-4 m-2">Cost: {{ "$%.2f"|format(job[0]["total_cost"]) }}</h5>
+            </div>
+        </div>
+<div class="d-flex justify-content-end container">
+    <form action="/complete_job/{{ job_id }}" method="post">
+        <button type="submit" class="btn btn-danger m-2">Job Complete</button>
+    </form>
+</div>
+
+<!-- NOTES -->
+<div class="container">
+    <h4 class="card-header">Notes:</h4>
+</div>
+{% if incomplete_note_count > 0 %}
+<div class="card m-2">
+    <h5 class="card-header justify-content-start mb-1"> Incomplete Notes</h5>
+    {% for i in range(0, incomplete_note_count) %}
+    <div class="d-flex justify-content-between">
+        <p class="px-2 fs-6">Created by: {{ incomplete_notes[i]["cr_first"] }} {{ incomplete_notes[i]["cr_last"] }}</p>
+        <p class="px-2 fs-6">Created on: {{ incomplete_notes[i]["created_on"] }}</p>
+    </div>
+    <div class="container">
+        <div class="row">
+            <h6 class="col-9">{{ incomplete_notes[i]["note"] }}</h6>
+            <div class="col-3 d-flex justify-content-end">
+                <form action="/complete_note" method="post">
+                    <input type="hidden" id="note_id" name="note_id" value={{ incomplete_notes[i]["id"] }}>
+                    <input type="hidden" id="job_id" name="job_id" value={{ job_id }}>
+                    <input type="hidden" id="cb_first" name="cb_first" value={{ installer_first_name }}>
+                    <input type="hidden" id="cb_last" name="cb_last" value={{ installer_last_name }}>
+                    <button type="submit" class="btn btn-secondary">Completed</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <hr class="mb-1">
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% if complete_note_count > 0 %}
+<div class="card m-3">
+    <h5 class="card-header justify-content-start mb-1">Completed Notes</h5>
+    {% for i in range(0, complete_note_count) %}
+    <div class="d-flex justify-content-between">
+        <p class="px-2 fs-6 margin-0">Created by: {{ complete_notes[i]["cr_first"] }} {{ complete_notes[i]["cr_last"] }}
+        </p>
+        <p class="px-2 fs-6 margin-0">Created on: {{ complete_notes[i]["created_on"] }}</p>
+    </div>
+    <div class="d-flex justify-content-between">
+        <p class="px-2 fs-6">Completed by: {{ complete_notes[i]["co_first"] }} {{ complete_notes[i]["co_last"] }}</p>
+        <p class="px-2 fs-6">Completed on: {{ complete_notes[i]["completed_on"] }}</p>
+    </div>
+    <div class="container">
+        <div class="row">
+            <h6 class="col-9">{{ complete_notes[i]["note"] }}</h6>
+        </div>
+    </div>
+    <div class="container">
+        <hr class="mb-1">
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+</div>
+</div>
+<!-- ADD NOTE -->
+<div class="container">
+    <!-- Button trigger modal -->
+    <div class="container d-flex justify-content-end">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-info col-3 m-2" data-bs-toggle="modal" data-bs-target="#add_note_modal">
+            Add note:
+        </button>
+        <!--Add Note Modal -->
+        <div class="modal fade" id="add_note_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Note:</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/new_note/{{ job_id }}" method="post">
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" placeholder="Write note here:" id="note"
+                                    name="note"></textarea>
+                                <label for="floatingTextarea">Write note here:</label>
+                            </div>
+                            <div class="col-8">
+                                <select aria-label="Default select example" class="form-select" id="completed"
+                                    name="completed">
+                                    <option selected value=0>Not completed</option>
+                                    <option value=1>Completed</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">New Note:</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

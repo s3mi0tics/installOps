@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ username }} home
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <!-- Add New Shades Button trigger modal -->
+        <div class="job-buttons row justify-content-end">
+            <button type="button" class="btn btn-primary col-3" data-bs-toggle="modal" data-bs-target="#new_shades_modal">
+                Add new shades
+            </button>
+        </div>
+        <!-- Add New Shades Modal -->
+        <div class="modal fade" id="new_shades_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header mb-1">
+                <h5 class="modal-title" id="staticBackdropLabel">Add new shades</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3" action="/new_shades/{{ job_id }}" method="post">
+                        <div class="container mt-1">
+                        <div class="row m-2">
+                            <div class="col-md-6">
+                              <label for="last_name">Type</label>
+                              <input type="text" class="form-control" id="type" name="type" placeholder="es cordless">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="first_name">Quantity</label>
+                              <input type="number" class="form-control" id="quantity" name="quantity" placeholder="4">
+                            </div>
+                        </div>
+                        <div class="row m-2">
+                            <div class="col-md-6">
+                              <label for="contact">Location:</label>
+                              <input type="text" class="form-control" id="location" name="location" placeholder="Shed">
+                            </div>
+                        </div>
+                            <input type="hidden" name="job_id" value="{{ job_id }}">
+                        <div class="col-12 text-end m-2 modal-footer">
+                          <button type="submit" class="btn btn-primary mt-3 px-5">Add New Shades</button>
+                        </div>
+                      </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+        <h2>Shades for {{ job[0]['last_name'] }}, {{ job[0]['first_name'] }}</h2>
+        {% if shades_count > 0 %}
+        <table class="table table-striped border">
+            <thead>
+                <tr>
+                    <th scope="col">Type</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Edit/Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(0, shades_count) %}
+                <tr>
+                    <th scope="row" class="yellow">{{ shades[i]["type"] }}</th>
+                    <td>{{ shades[i]["quantity"] }}</td>
+                    <td>{{ shades[i]["location"] }}</td>
+                    <td>
+                        <div class="container">
+                            <!-- Edit/Delete Shades Button trigger modal -->
+                            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#edit_delete_shades_modal">Edit/Delete</button>
+                        </div>
+                        <!-- Edit/Delete Shades Modal -->
+                        <div class="modal fade" id="edit_delete_shades_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header mb-1">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Edit/Delete Shades</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="/update_shades/{{ job_id }}" method="post">
+                                        <div class="container mt-1">
+                                            <div class="row m-2">
+                                                <div class="col-md-6">
+                                                    <label for="last_name">Type</label>
+                                                    <input type="text" class="form-control" id="type" name="type" value="{{ shades[i]["type"] }}">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="first_name">Quantity</label>
+                                                    <input type="number" class="form-control" id="quantity" name="quantity" value={{ shades[i]["quantity"] }}>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 m-3">
+                                                <label for="contact">Location:</label>
+                                                <input type="text" class="form-control" id="location" name="location" value="{{ shades[i]["location"] }}">
+                                            </div>
+                                            <input type="hidden" name="job_id" value="{{ job_id }}">
+                                            <input type="hidden" name="shades_id" value="{{ shades[i]["id"] }}">
+                                            <div class="col-12 text-end mt-3 modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-3">Update Shades</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <form action="/delete_shades/{{ shades[i]["id"] }}" method="post">
+                                            <div class="d-flex justify-content-end container">
+                                                <button type="submit" class="btn btn-danger col-3 mb-4">Delete Shades</button>
+                                            </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="card">
+            <h5 class="card-header">No Shades for this job yet</h5>
+        </div>
+        {% endif %}
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-secondary col-3 mt-3" href="/job/{{ job_id }}">Return to Job Details</a>
+        </div>
+    </div>
+{% endblock %}
