@@ -4,7 +4,7 @@
 
 [CS50 final project by Colby Kauk: ](https://youtu.be/C9PW849ps1E?si=_ZcZmNzClq3mtQwr)https://youtu.be/C9PW849ps1E?si=_ZcZmNzClq3mtQwr
 
-## EXPLINATION
+## EXPLANATION
 InstallOps is a Helpdesk web application designed to help a manager schedule the deliveries of products and services of a blind installation operation.
 
 ## UNDERSTANDING
